@@ -94,15 +94,18 @@
 
 #import "ViewController.h"
 #import "Cell.h"
+#import "SpokeReusableView.h"
 
 @implementation ViewController
 
 -(void)viewDidLoad
 {
-    self.cellCount = 20;
+    self.cellCount = 6;
     UITapGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
     [self.collectionView addGestureRecognizer:tapRecognizer];
     [self.collectionView registerClass:[Cell class] forCellWithReuseIdentifier:@"MY_CELL"];
+    [self.collectionView registerClass:[SpokeReusableView class] forSupplementaryViewOfKind:@"SPOKE" withReuseIdentifier:@"SPOKE"];
+
     [self.collectionView reloadData];
     self.collectionView.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
 }
@@ -116,6 +119,11 @@
 {
     Cell *cell = [cv dequeueReusableCellWithReuseIdentifier:@"MY_CELL" forIndexPath:indexPath];
     return cell;
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)cv viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    UICollectionReusableView *view = [cv dequeueReusableSupplementaryViewOfKind:@"SPOKE" withReuseIdentifier:@"SPOKE" forIndexPath:indexPath];
+    return view;
 }
 
 - (void)handleTapGesture:(UITapGestureRecognizer *)sender {

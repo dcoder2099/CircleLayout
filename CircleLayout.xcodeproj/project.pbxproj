@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6578E64A19E2DB91008F3B33 /* SpokeAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 6578E64919E2DB91008F3B33 /* SpokeAttributes.m */; };
+		6578E64D19E4333D008F3B33 /* SpokeLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6578E64C19E4333D008F3B33 /* SpokeLayer.m */; };
+		6578E64F19E44BD9008F3B33 /* SpokeReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6578E64E19E44BD9008F3B33 /* SpokeReusableView.m */; };
 		77AF0077157FA442001EC3FB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77AF0076157FA442001EC3FB /* UIKit.framework */; };
 		77AF0079157FA442001EC3FB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77AF0078157FA442001EC3FB /* Foundation.framework */; };
 		77AF007B157FA442001EC3FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77AF007A157FA442001EC3FB /* CoreGraphics.framework */; };
@@ -21,6 +24,12 @@
 
 /* Begin PBXFileReference section */
 		28B8D5C415817E9B00386DDB /* ReadMe.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
+		6578E64519E2D985008F3B33 /* SpokeReusableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpokeReusableView.h; sourceTree = "<group>"; };
+		6578E64819E2DB91008F3B33 /* SpokeAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpokeAttributes.h; sourceTree = "<group>"; };
+		6578E64919E2DB91008F3B33 /* SpokeAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpokeAttributes.m; sourceTree = "<group>"; };
+		6578E64B19E4333D008F3B33 /* SpokeLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpokeLayer.h; sourceTree = "<group>"; };
+		6578E64C19E4333D008F3B33 /* SpokeLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpokeLayer.m; sourceTree = "<group>"; };
+		6578E64E19E44BD9008F3B33 /* SpokeReusableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpokeReusableView.m; sourceTree = "<group>"; };
 		77AF0072157FA442001EC3FB /* CircleLayout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CircleLayout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		77AF0076157FA442001EC3FB /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		77AF0078157FA442001EC3FB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -93,6 +102,12 @@
 				77AF0089157FA442001EC3FB /* ViewController.m */,
 				77AF0093157FA528001EC3FB /* Cell.h */,
 				77AF0094157FA528001EC3FB /* Cell.m */,
+				6578E64819E2DB91008F3B33 /* SpokeAttributes.h */,
+				6578E64919E2DB91008F3B33 /* SpokeAttributes.m */,
+				6578E64519E2D985008F3B33 /* SpokeReusableView.h */,
+				6578E64E19E44BD9008F3B33 /* SpokeReusableView.m */,
+				6578E64B19E4333D008F3B33 /* SpokeLayer.h */,
+				6578E64C19E4333D008F3B33 /* SpokeLayer.m */,
 				77AF0095157FA528001EC3FB /* CircleLayout.h */,
 				77AF0096157FA528001EC3FB /* CircleLayout.m */,
 				77AF007D157FA442001EC3FB /* Supporting Files */,
@@ -137,7 +152,7 @@
 		77AF0069157FA442001EC3FB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = "Olivier Gutknecht";
 			};
 			buildConfigurationList = 77AF006C157FA442001EC3FB /* Build configuration list for PBXProject "CircleLayout" */;
@@ -175,8 +190,11 @@
 			files = (
 				77AF0083157FA442001EC3FB /* main.m in Sources */,
 				77AF0087157FA442001EC3FB /* AppDelegate.m in Sources */,
+				6578E64A19E2DB91008F3B33 /* SpokeAttributes.m in Sources */,
 				77AF008A157FA442001EC3FB /* ViewController.m in Sources */,
 				77AF0097157FA528001EC3FB /* Cell.m in Sources */,
+				6578E64D19E4333D008F3B33 /* SpokeLayer.m in Sources */,
+				6578E64F19E44BD9008F3B33 /* SpokeReusableView.m in Sources */,
 				77AF0098157FA528001EC3FB /* CircleLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,6 +234,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};

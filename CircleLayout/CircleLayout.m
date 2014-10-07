@@ -93,6 +93,7 @@
  */
 
 #import "CircleLayout.h"
+#import "SpokeAttributes.h"
 
 #define ITEM_SIZE 70
 
@@ -130,12 +131,25 @@
     return attributes;
 }
 
+- (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
+    SpokeAttributes *attributes = [SpokeAttributes layoutAttributesForSupplementaryViewOfKind:@"SPOKE" withIndexPath:indexPath];
+    // CONFIGURE
+    attributes.zIndex = -10;
+    attributes.size = self.collectionView.frame.size;
+    attributes.center = _center;
+    attributes.origin = _center;
+    attributes.endpoint = CGPointMake(_center.x + _radius * cosf(2 * indexPath.item * M_PI / _cellCount),
+                                      _center.y + _radius * sinf(2 * indexPath.item * M_PI / _cellCount));
+    return attributes;
+}
+
 -(NSArray*)layoutAttributesForElementsInRect:(CGRect)rect
 {
     NSMutableArray* attributes = [NSMutableArray array];
     for (NSInteger i=0 ; i < self.cellCount; i++) {
         NSIndexPath* indexPath = [NSIndexPath indexPathForItem:i inSection:0];
         [attributes addObject:[self layoutAttributesForItemAtIndexPath:indexPath]];
+        [attributes addObject:[self layoutAttributesForSupplementaryViewOfKind:@"SPOKE" atIndexPath:indexPath]];
     }
     return attributes;
 }
@@ -212,6 +226,37 @@
         attributes.transform3D = CATransform3DMakeScale(0.1, 0.1, 1.0);
     }
     
+    return attributes;
+}
+
+- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingSupplementaryElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)elementIndexPath {
+    UICollectionViewLayoutAttributes *attributes = [super initialLayoutAttributesForAppearingSupplementaryElementOfKind:elementKind atIndexPath:elementIndexPath];
+    if ([self.insertIndexPaths containsObject:elementIndexPath])
+    {
+        // only change attributes on inserted cells
+        if (!attributes)
+            attributes = [self layoutAttributesForSupplementaryViewOfKind:elementKind atIndexPath:elementIndexPath];
+
+        // Configure attributes ...
+        attributes.alpha = 0.0;
+        attributes.center = CGPointMake(_center.x, _center.y);
+        attributes.transform3D = CATransform3DMakeScale(0.1, 0.1, 1.0);
+    }
+
+    return attributes;
+}
+
+- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingSupplementaryElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)elementIndexPath {
+    UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingSupplementaryElementOfKind:elementKind atIndexPath:elementIndexPath];
+    if ([self.deleteIndexPaths containsObject:elementIndexPath])
+    {
+        if (!attributes)
+            attributes = [self layoutAttributesForSupplementaryViewOfKind:elementKind atIndexPath:elementIndexPath];
+
+        attributes.alpha = 0.0;
+        attributes.center = CGPointMake(_center.x, _center.y);
+        attributes.transform3D = CATransform3DMakeScale(0.1, 0.1, 1.0);
+    }
     return attributes;
 }
 
