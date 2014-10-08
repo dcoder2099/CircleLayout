@@ -102,7 +102,7 @@
 // arrays to keep track of insert, delete index paths
 @property (nonatomic, strong) NSMutableArray *deleteIndexPaths;
 @property (nonatomic, strong) NSMutableArray *insertIndexPaths;
-
+@property (nonatomic, strong) NSDictionary *layoutInformation;
 @end
 
 @implementation CircleLayout
@@ -115,32 +115,42 @@
     _cellCount = [[self collectionView] numberOfItemsInSection:0];
     _center = CGPointMake(size.width / 2.0, size.height / 2.0);
     _radius = MIN(size.width, size.height) / 2.5;
+
+    NSMutableDictionary *layoutInformation = [NSMutableDictionary dictionary];
+    NSMutableDictionary *cellInformation = [NSMutableDictionary dictionary];
+    NSMutableDictionary *spokeInfo = [NSMutableDictionary dictionary];
+    NSIndexPath *indexPath;
+    NSInteger numSections = [self.collectionView numberOfSections];
+    for(NSInteger section = 0; section < numSections; section++){
+        NSInteger numItems = [self.collectionView numberOfItemsInSection:section];
+        for(NSInteger item = 0; item < numItems; item++){
+            indexPath = [NSIndexPath indexPathForItem:item inSection:section];
+            UICollectionViewLayoutAttributes *attributes = [self cellAttributesForPath:indexPath];
+            [spokeInfo setObject:[self spokeAttributesForPath:indexPath] forKey:indexPath];
+            [cellInformation setObject:attributes forKey:indexPath];
+        }
+    }
+    [layoutInformation setObject:cellInformation forKey:@"MY_CELL"];
+    [layoutInformation setObject:spokeInfo forKey:@"SPOKE"];
+    self.layoutInformation = layoutInformation;
 }
 
--(CGSize)collectionViewContentSize
-{
+-(CGSize)collectionViewContentSize {
     return [self collectionView].frame.size;
 }
 
-- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)path
-{
-    UICollectionViewLayoutAttributes* attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:path];
-    attributes.size = CGSizeMake(ITEM_SIZE, ITEM_SIZE);
-    attributes.center = CGPointMake(_center.x + _radius * cosf(2 * path.item * M_PI / _cellCount),
-                                    _center.y + _radius * sinf(2 * path.item * M_PI / _cellCount));
-    return attributes;
+- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
+    return self.layoutInformation[@"MY_CELL"][indexPath];
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
-    SpokeAttributes *attributes = [SpokeAttributes layoutAttributesForSupplementaryViewOfKind:@"SPOKE" withIndexPath:indexPath];
-    // CONFIGURE
-    attributes.zIndex = -10;
-    attributes.size = self.collectionView.frame.size;
-    attributes.center = _center;
-    attributes.origin = _center;
-    attributes.endpoint = CGPointMake(_center.x + _radius * cosf(2 * indexPath.item * M_PI / _cellCount),
-                                      _center.y + _radius * sinf(2 * indexPath.item * M_PI / _cellCount));
-    return attributes;
+    UICollectionViewLayoutAttributes *attrs = self.layoutInformation[elementKind][indexPath];
+
+    // WHY IS THIS A PROBLEM? THE SAME DOES NOT HAPPEN FOR ItemAtIndexPath
+    if (!attrs)
+        attrs = [self spokeAttributesForPath:indexPath];
+
+    return attrs;
 }
 
 -(NSArray*)layoutAttributesForElementsInRect:(CGRect)rect
@@ -235,7 +245,7 @@
     {
         // only change attributes on inserted cells
         if (!attributes)
-            attributes = [self layoutAttributesForSupplementaryViewOfKind:elementKind atIndexPath:elementIndexPath];
+            attributes = [self spokeAttributesForPath:elementIndexPath];
 
         // Configure attributes ...
         attributes.alpha = 0.0;
@@ -247,16 +257,41 @@
 }
 
 - (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingSupplementaryElementOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)elementIndexPath {
-    UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingSupplementaryElementOfKind:elementKind atIndexPath:elementIndexPath];
+    UICollectionViewLayoutAttributes *attributes = nil;//[super finalLayoutAttributesForDisappearingSupplementaryElementOfKind:elementKind atIndexPath:elementIndexPath];
     if ([self.deleteIndexPaths containsObject:elementIndexPath])
     {
         if (!attributes)
-            attributes = [self layoutAttributesForSupplementaryViewOfKind:elementKind atIndexPath:elementIndexPath];
+            attributes = [self spokeAttributesForPath:elementIndexPath];
 
-        attributes.alpha = 0.0;
-        attributes.center = CGPointMake(_center.x, _center.y);
-        attributes.transform3D = CATransform3DMakeScale(0.1, 0.1, 1.0);
+        attributes.alpha = 1.0;
+//        attributes.center = CGPointMake(_center.x, _center.y);
+        attributes.transform3D = CATransform3DScale(attributes.transform3D, 0.1, 0.1, 1.0);
     }
+    return attributes;
+}
+
+- (UICollectionViewLayoutAttributes *)cellAttributesForPath:(NSIndexPath *)path {
+    UICollectionViewLayoutAttributes* attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:path];
+    attributes.size = CGSizeMake(ITEM_SIZE, ITEM_SIZE);
+    attributes.center = CGPointMake(_center.x + _radius * cosf(2 * path.item * M_PI / _cellCount),
+                                    _center.y + _radius * sinf(2 * path.item * M_PI / _cellCount));
+//    NSLog(@"attributes: %@", attributes);
+    return attributes;
+}
+
+- (UICollectionViewLayoutAttributes *)spokeAttributesForPath:(NSIndexPath *)indexPath {
+    SpokeAttributes *attributes = [SpokeAttributes layoutAttributesForSupplementaryViewOfKind:@"SPOKE" withIndexPath:indexPath];
+    // CONFIGURE
+    attributes.zIndex = -10;
+    attributes.size = CGSizeMake(2.0 * _radius, 4.0);
+    attributes.center = _center;
+    CGFloat rotation = (CGFloat)indexPath.item / (CGFloat)_cellCount * 2.0 * M_PI;
+    CATransform3D transform = CATransform3DMakeRotation(rotation, 0.0, 0.0, 1.0);
+    attributes.transform3D = transform;
+    attributes.origin = _center;
+    attributes.endpoint = CGPointMake(_center.x + _radius * cosf(2 * indexPath.item * M_PI / _cellCount),
+                                      _center.y + _radius * sinf(2 * indexPath.item * M_PI / _cellCount));
+    NSLog(@"attributes: %@", attributes);
     return attributes;
 }
 

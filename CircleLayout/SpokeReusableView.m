@@ -7,11 +7,9 @@
 //
 
 #import "SpokeReusableView.h"
-#import "SpokeLayer.h"
 #import "SpokeAttributes.h"
 
 @interface SpokeReusableView ()
-@property (nonatomic, strong) SpokeLayer *strokeLayer;
 @end
 
 @implementation SpokeReusableView
@@ -20,8 +18,16 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.opaque = NO;
-        self.strokeLayer = [[SpokeLayer alloc] initWithFrame:frame];
-        [self.layer addSublayer:self.strokeLayer];
+        self.layer.borderWidth = 0.0;
+        self.layer.borderColor = [UIColor clearColor].CGColor;
+
+        UIView *subview = [[UIView alloc] init];
+        CGRect subframe = CGRectMake(frame.size.width / 2.0, 0.0,
+                                    frame.size.width / 2.0, frame.size.height);
+        subview.frame = subframe;
+        subview.layer.backgroundColor = subview.layer.borderColor = [UIColor blueColor].CGColor;
+        subview.layer.borderWidth = 0.0f;
+        [self addSubview:subview];
     }
     return self;
 }
@@ -37,7 +43,6 @@
     SpokeAttributes *attrs = (SpokeAttributes *)layoutAttributes;
     self.startingPoint = attrs.origin;
     self.endingPoint = attrs.endpoint;
-    [self.strokeLayer setStartingPoint: self.startingPoint endingPoint: self.endingPoint];
 }
 
 - (NSString *)description {
